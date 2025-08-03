@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TradingView Chart with Full Color Control</title>
+  <title>TradingView Chart with Full Color Control & Fixed Background</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     html, body {
@@ -28,6 +28,8 @@
       "mainSeriesProperties.candleStyle.wickUpColor": "#3498db",
       "mainSeriesProperties.candleStyle.wickDownColor": "#7f8c8d",
       "paneProperties.background": "#000000",
+      "paneProperties.backgroundType": "solid",
+      "paneProperties.scalesProperties.backgroundColor": "#000000",
       "paneProperties.vertGridProperties.color": "#222222",
       "paneProperties.horzGridProperties.color": "#222222",
     };
@@ -39,7 +41,7 @@
       symbol: "BINANCE:BTCUSDT",
       interval: "60",
       timezone: "Etc/UTC",
-      theme: "dark",
+      theme: "dark",   // تم رو میتونی هر چی بخوای بذاری، تاثیری روی پس زمینه نداره
       style: "1",
       locale: "en",
       hide_top_toolbar: true,
@@ -58,6 +60,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     let config = { ...defaultConfig };
 
+    // پارامتر config JSON (اختیاری)
     if (urlParams.has('config')) {
       try {
         const decoded = decodeURIComponent(urlParams.get('config'));
@@ -75,7 +78,7 @@
       }
     });
 
-    // خواندن رنگ‌ها
+    // رنگ‌ها
     const upColor = urlParams.get('upColor');
     const downColor = urlParams.get('downColor');
     const upBorderColor = urlParams.get('upBorderColor');
@@ -98,6 +101,8 @@
 
     if (bgColor) {
       config.overrides["paneProperties.background"] = bgColor;
+      config.overrides["paneProperties.backgroundType"] = "solid";
+      config.overrides["paneProperties.scalesProperties.backgroundColor"] = bgColor;
     }
 
     new TradingView.widget(config);
