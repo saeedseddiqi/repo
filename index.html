@@ -54,18 +54,24 @@
     };
 
     const urlParams = new URLSearchParams(window.location.search);
-    let config = defaultConfig;
+    let config = { ...defaultConfig };
 
     if (urlParams.has('config')) {
       try {
         const decoded = decodeURIComponent(urlParams.get('config'));
         const parsed = JSON.parse(decoded);
-        config = {...defaultConfig, ...parsed};
-        // برای ادغام deep تر می تونی کد بیشتری اضافه کنی اگر خواستی
+        config = { ...config, ...parsed };
       } catch (e) {
         console.warn("Invalid config JSON in URL, using default config");
       }
     }
+
+    // پشتیبانی پارامترهای ساده URL (مثلاً ?symbol=BINANCE:ETHUSDT&interval=15)
+    ['symbol', 'interval', 'theme', 'locale', 'timezone'].forEach(key => {
+      if (urlParams.has(key)) {
+        config[key] = urlParams.get(key);
+      }
+    });
 
     new TradingView.widget(config);
   </script>
