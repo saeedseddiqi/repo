@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TradingView Chart with Encoded Config</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      background-color: #000;
+    }
+    #tv_chart_container {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="tv_chart_container"></div>
+
+  <script src="https://s3.tradingview.com/tv.js"></script>
+  <script>
+    const defaultConfig = {
+      container_id: "tv_chart_container",
+      width: "100%",
+      height: "100%",
+      symbol: "BINANCE:BTCUSDT",
+      interval: "60",
+      timezone: "Etc/UTC",
+      theme: "dark",
+      style: "1",
+      locale: "en",
+      hide_top_toolbar: true,
+      hide_legend: false,
+      save_image: false,
+      studies: [],
+      studies_overrides: {
+        "volume.volume.color.0": "#00000000",
+        "volume.volume.color.1": "#00000000",
+        "volume.volume.transparency": 100,
+      },
+      overrides: {
+        "mainSeriesProperties.candleStyle.upColor": "#3498db",
+        "mainSeriesProperties.candleStyle.downColor": "#7f8c8d",
+        "mainSeriesProperties.candleStyle.borderUpColor": "#3498db",
+        "mainSeriesProperties.candleStyle.borderDownColor": "#7f8c8d",
+        "mainSeriesProperties.candleStyle.wickUpColor": "#3498db",
+        "mainSeriesProperties.candleStyle.wickDownColor": "#7f8c8d",
+        "paneProperties.background": "#000000",
+        "paneProperties.vertGridProperties.color": "#222222",
+        "paneProperties.horzGridProperties.color": "#222222",
+      },
+      hide_crosshair: true
+    };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let config = defaultConfig;
+
+    if (urlParams.has('config')) {
+      try {
+        const decoded = decodeURIComponent(urlParams.get('config'));
+        const parsed = JSON.parse(decoded);
+        config = {...defaultConfig, ...parsed};
+        // برای ادغام deep تر می تونی کد بیشتری اضافه کنی اگر خواستی
+      } catch (e) {
+        console.warn("Invalid config JSON in URL, using default config");
+      }
+    }
+
+    new TradingView.widget(config);
+  </script>
+</body>
+</html>
