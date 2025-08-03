@@ -2,14 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TradingView Chart with Dynamic Config</title>
+  <title>TradingView Chart with Full Color Params from URL</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background-color: #000;
+      margin: 0; padding: 0; height: 100%;
+      background-color: #000; /* بک‌گراند صفحه */
     }
     #tv_chart_container {
       width: 100vw;
@@ -22,52 +20,31 @@
 
   <script src="https://s3.tradingview.com/tv.js"></script>
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-
-    const theme = urlParams.get("theme") || "dark";
-    const isCustom = theme.toLowerCase() === "custom";
-
-    const defaultColors = {
-      upColor: "#4CAF50",
-      downColor: "#F44336",
-      bgColor: "#000000",
-      gridColor: "#222222",
-      crossColor: "#888888"
+    const defaultOverrides = {
+      "mainSeriesProperties.candleStyle.upColor": "#4CAF50",
+      "mainSeriesProperties.candleStyle.downColor": "#F44336",
+      "mainSeriesProperties.candleStyle.borderUpColor": "#4CAF50",
+      "mainSeriesProperties.candleStyle.borderDownColor": "#F44336",
+      "mainSeriesProperties.candleStyle.wickUpColor": "#4CAF50",
+      "mainSeriesProperties.candleStyle.wickDownColor": "#F44336",
+      "paneProperties.background": "#000000",
+      "paneProperties.backgroundType": "solid",
+      "paneProperties.scalesProperties.backgroundColor": "#000000",
+      "paneProperties.vertGridProperties.color": "#222222",
+      "paneProperties.horzGridProperties.color": "#222222",
+      "paneProperties.crossHairProperties.color": "#888888"
     };
 
-    const upColor = urlParams.get("upColor") || defaultColors.upColor;
-    const downColor = urlParams.get("downColor") || defaultColors.downColor;
-    const upBorderColor = urlParams.get("upBorderColor") || upColor;
-    const downBorderColor = urlParams.get("downBorderColor") || downColor;
-    const upWickColor = urlParams.get("upWickColor") || upColor;
-    const downWickColor = urlParams.get("downWickColor") || downColor;
-    const bgColor = urlParams.get("bgColor") || defaultColors.bgColor;
-
-    const overrides = isCustom ? {
-      "mainSeriesProperties.candleStyle.upColor": upColor,
-      "mainSeriesProperties.candleStyle.downColor": downColor,
-      "mainSeriesProperties.candleStyle.borderUpColor": upBorderColor,
-      "mainSeriesProperties.candleStyle.borderDownColor": downBorderColor,
-      "mainSeriesProperties.candleStyle.wickUpColor": upWickColor,
-      "mainSeriesProperties.candleStyle.wickDownColor": downWickColor,
-      "paneProperties.background": bgColor,
-      "paneProperties.backgroundType": "solid",
-      "paneProperties.scalesProperties.backgroundColor": bgColor,
-      "paneProperties.vertGridProperties.color": defaultColors.gridColor,
-      "paneProperties.horzGridProperties.color": defaultColors.gridColor,
-      "paneProperties.crossHairProperties.color": defaultColors.crossColor
-    } : {};
-
-    const config = {
+    const defaultConfig = {
       container_id: "tv_chart_container",
       width: "100%",
       height: "100%",
-      symbol: urlParams.get("symbol") || "BINANCE:BTCUSDT",
-      interval: urlParams.get("interval") || "15",
-      timezone: urlParams.get("timezone") || "Etc/UTC",
-      theme: isCustom ? "dark" : theme,
+      symbol: "BINANCE:BTCUSDT",
+      interval: "60",
+      timezone: "Etc/UTC",
+      theme: "dark",
       style: "1",
-      locale: urlParams.get("locale") || "en",
+      locale: "en",
       hide_top_toolbar: true,
       hide_legend: false,
       save_image: false,
@@ -77,9 +54,49 @@
         "volume.volume.color.1": "#00000000",
         "volume.volume.transparency": 100,
       },
-      overrides,
+      overrides: { ...defaultOverrides },
       hide_crosshair: false
     };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let config = { ...defaultConfig };
+
+    // پارامترهای ساده مثل نماد، تایم فریم، تم، منطقه زمانی و زبان
+    ['symbol', 'interval', 'theme', 'locale', 'timezone'].forEach(key => {
+      if (urlParams.has(key)) {
+        config[key] = urlParams.get(key);
+      }
+    });
+
+    // گرفتن رنگ‌ها از URL
+    const upColor = urlParams.get('upColor');
+    const downColor = urlParams.get('downColor');
+    const upBorderColor = urlParams.get('upBorderColor');
+    const downBorderColor = urlParams.get('downBorderColor');
+    const upWickColor = urlParams.get('upWickColor');
+    const downWickColor = urlParams.get('downWickColor');
+    const bgColor = urlParams.get('bgColor');
+
+    if (upColor) {
+      config.overrides["mainSeriesProperties.candleStyle.upColor"] = upColor;
+      config.overrides["mainSeriesProperties.candleStyle.borderUpColor"] = upBorderColor || upColor;
+      config.overrides["mainSeriesProperties.candleStyle.wickUpColor"] = upWickColor || upColor;
+    }
+
+    if (downColor) {
+      config.overrides["mainSeriesProperties.candleStyle.downColor"] = downColor;
+      config.overrides["mainSeriesProperties.candleStyle.borderDownColor"] = downBorderColor || downColor;
+      config.overrides["mainSeriesProperties.candleStyle.wickDownColor"] = downWickColor || downColor;
+    }
+
+    if (bgColor) {
+      config.overrides["paneProperties.background"] = bgColor;
+      config.overrides["paneProperties.backgroundType"] = "solid";
+      config.overrides["paneProperties.scalesProperties.backgroundColor"] = bgColor;
+      config.overrides["paneProperties.vertGridProperties.color"] = bgColor;
+      config.overrides["paneProperties.horzGridProperties.color"] = bgColor;
+      config.overrides["paneProperties.crossHairProperties.color"] = bgColor;
+    }
 
     new TradingView.widget(config);
   </script>
