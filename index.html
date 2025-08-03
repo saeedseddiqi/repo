@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TradingView Chart with Color Params from URL</title>
+  <title>TradingView Chart with Full Color Control</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     html, body {
@@ -68,28 +68,32 @@
       }
     }
 
-    // پشتیبانی پارامترهای ساده URL
+    // پارامترهای ساده URL
     ['symbol', 'interval', 'theme', 'locale', 'timezone'].forEach(key => {
       if (urlParams.has(key)) {
         config[key] = urlParams.get(key);
       }
     });
 
-    // خواندن رنگ کندل‌ها و پس‌زمینه از URL
+    // خواندن رنگ‌ها
     const upColor = urlParams.get('upColor');
     const downColor = urlParams.get('downColor');
+    const upBorderColor = urlParams.get('upBorderColor');
+    const downBorderColor = urlParams.get('downBorderColor');
+    const upWickColor = urlParams.get('upWickColor');
+    const downWickColor = urlParams.get('downWickColor');
     const bgColor = urlParams.get('bgColor');
 
     if (upColor) {
       config.overrides["mainSeriesProperties.candleStyle.upColor"] = upColor;
-      config.overrides["mainSeriesProperties.candleStyle.borderUpColor"] = upColor;
-      config.overrides["mainSeriesProperties.candleStyle.wickUpColor"] = upColor;
+      config.overrides["mainSeriesProperties.candleStyle.borderUpColor"] = upBorderColor || upColor;
+      config.overrides["mainSeriesProperties.candleStyle.wickUpColor"] = upWickColor || upColor;
     }
 
     if (downColor) {
       config.overrides["mainSeriesProperties.candleStyle.downColor"] = downColor;
-      config.overrides["mainSeriesProperties.candleStyle.borderDownColor"] = downColor;
-      config.overrides["mainSeriesProperties.candleStyle.wickDownColor"] = downColor;
+      config.overrides["mainSeriesProperties.candleStyle.borderDownColor"] = downBorderColor || downColor;
+      config.overrides["mainSeriesProperties.candleStyle.wickDownColor"] = downWickColor || downColor;
     }
 
     if (bgColor) {
