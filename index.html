@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TradingView Chart with Full Color Control & Fixed Background</title>
+  <title>TradingView Chart with Dynamic BG Color</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     html, body {
@@ -27,6 +27,7 @@
       "mainSeriesProperties.candleStyle.borderDownColor": "#7f8c8d",
       "mainSeriesProperties.candleStyle.wickUpColor": "#3498db",
       "mainSeriesProperties.candleStyle.wickDownColor": "#7f8c8d",
+      // رنگ پس‌زمینه پیش‌فرض که وقتی bgColor ندادیم استفاده میشه
       "paneProperties.background": "#000000",
       "paneProperties.backgroundType": "solid",
       "paneProperties.scalesProperties.backgroundColor": "#000000",
@@ -41,7 +42,7 @@
       symbol: "BINANCE:BTCUSDT",
       interval: "60",
       timezone: "Etc/UTC",
-      theme: "dark",   // تم رو میتونی هر چی بخوای بذاری، تاثیری روی پس زمینه نداره
+      theme: "dark",  // تم هر چی باشه، مهم نیست
       style: "1",
       locale: "en",
       hide_top_toolbar: true,
@@ -99,6 +100,7 @@
       config.overrides["mainSeriesProperties.candleStyle.wickDownColor"] = downWickColor || downColor;
     }
 
+    // اگر bgColor داده نشده، از رنگ پیش‌فرض استفاده کن
     if (bgColor) {
       config.overrides["paneProperties.background"] = bgColor;
       config.overrides["paneProperties.backgroundType"] = "solid";
