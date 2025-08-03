@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TradingView Chart with Encoded Config</title>
+  <title>TradingView Chart with Color Params from URL</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     html, body {
@@ -20,6 +20,18 @@
 
   <script src="https://s3.tradingview.com/tv.js"></script>
   <script>
+    const defaultOverrides = {
+      "mainSeriesProperties.candleStyle.upColor": "#3498db",
+      "mainSeriesProperties.candleStyle.downColor": "#7f8c8d",
+      "mainSeriesProperties.candleStyle.borderUpColor": "#3498db",
+      "mainSeriesProperties.candleStyle.borderDownColor": "#7f8c8d",
+      "mainSeriesProperties.candleStyle.wickUpColor": "#3498db",
+      "mainSeriesProperties.candleStyle.wickDownColor": "#7f8c8d",
+      "paneProperties.background": "#000000",
+      "paneProperties.vertGridProperties.color": "#222222",
+      "paneProperties.horzGridProperties.color": "#222222",
+    };
+
     const defaultConfig = {
       container_id: "tv_chart_container",
       width: "100%",
@@ -39,17 +51,7 @@
         "volume.volume.color.1": "#00000000",
         "volume.volume.transparency": 100,
       },
-      overrides: {
-        "mainSeriesProperties.candleStyle.upColor": "#3498db",
-        "mainSeriesProperties.candleStyle.downColor": "#7f8c8d",
-        "mainSeriesProperties.candleStyle.borderUpColor": "#3498db",
-        "mainSeriesProperties.candleStyle.borderDownColor": "#7f8c8d",
-        "mainSeriesProperties.candleStyle.wickUpColor": "#3498db",
-        "mainSeriesProperties.candleStyle.wickDownColor": "#7f8c8d",
-        "paneProperties.background": "#000000",
-        "paneProperties.vertGridProperties.color": "#222222",
-        "paneProperties.horzGridProperties.color": "#222222",
-      },
+      overrides: { ...defaultOverrides },
       hide_crosshair: true
     };
 
@@ -66,12 +68,33 @@
       }
     }
 
-    // پشتیبانی پارامترهای ساده URL (مثلاً ?symbol=BINANCE:ETHUSDT&interval=15)
+    // پشتیبانی پارامترهای ساده URL
     ['symbol', 'interval', 'theme', 'locale', 'timezone'].forEach(key => {
       if (urlParams.has(key)) {
         config[key] = urlParams.get(key);
       }
     });
+
+    // خواندن رنگ کندل‌ها و پس‌زمینه از URL
+    const upColor = urlParams.get('upColor');
+    const downColor = urlParams.get('downColor');
+    const bgColor = urlParams.get('bgColor');
+
+    if (upColor) {
+      config.overrides["mainSeriesProperties.candleStyle.upColor"] = upColor;
+      config.overrides["mainSeriesProperties.candleStyle.borderUpColor"] = upColor;
+      config.overrides["mainSeriesProperties.candleStyle.wickUpColor"] = upColor;
+    }
+
+    if (downColor) {
+      config.overrides["mainSeriesProperties.candleStyle.downColor"] = downColor;
+      config.overrides["mainSeriesProperties.candleStyle.borderDownColor"] = downColor;
+      config.overrides["mainSeriesProperties.candleStyle.wickDownColor"] = downColor;
+    }
+
+    if (bgColor) {
+      config.overrides["paneProperties.background"] = bgColor;
+    }
 
     new TradingView.widget(config);
   </script>
