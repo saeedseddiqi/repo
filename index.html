@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TradingView Chart with Dynamic BG Color</title>
+  <title>TradingView Chart with Forced BG Color</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     html, body {
@@ -27,12 +27,11 @@
       "mainSeriesProperties.candleStyle.borderDownColor": "#7f8c8d",
       "mainSeriesProperties.candleStyle.wickUpColor": "#3498db",
       "mainSeriesProperties.candleStyle.wickDownColor": "#7f8c8d",
-      // رنگ پس‌زمینه پیش‌فرض که وقتی bgColor ندادیم استفاده میشه
       "paneProperties.background": "#000000",
       "paneProperties.backgroundType": "solid",
       "paneProperties.scalesProperties.backgroundColor": "#000000",
-      "paneProperties.vertGridProperties.color": "#222222",
-      "paneProperties.horzGridProperties.color": "#222222",
+      "paneProperties.vertGridProperties.color": "#000000",
+      "paneProperties.horzGridProperties.color": "#000000",
     };
 
     const defaultConfig = {
@@ -42,7 +41,7 @@
       symbol: "BINANCE:BTCUSDT",
       interval: "60",
       timezone: "Etc/UTC",
-      theme: "dark",  // تم هر چی باشه، مهم نیست
+      theme: "light",  // تم رو light بذار که override پس‌زمینه خوب اعمال بشه
       style: "1",
       locale: "en",
       hide_top_toolbar: true,
@@ -61,7 +60,6 @@
     const urlParams = new URLSearchParams(window.location.search);
     let config = { ...defaultConfig };
 
-    // پارامتر config JSON (اختیاری)
     if (urlParams.has('config')) {
       try {
         const decoded = decodeURIComponent(urlParams.get('config'));
@@ -72,14 +70,12 @@
       }
     }
 
-    // پارامترهای ساده URL
     ['symbol', 'interval', 'theme', 'locale', 'timezone'].forEach(key => {
       if (urlParams.has(key)) {
         config[key] = urlParams.get(key);
       }
     });
 
-    // رنگ‌ها
     const upColor = urlParams.get('upColor');
     const downColor = urlParams.get('downColor');
     const upBorderColor = urlParams.get('upBorderColor');
@@ -100,11 +96,12 @@
       config.overrides["mainSeriesProperties.candleStyle.wickDownColor"] = downWickColor || downColor;
     }
 
-    // اگر bgColor داده نشده، از رنگ پیش‌فرض استفاده کن
     if (bgColor) {
       config.overrides["paneProperties.background"] = bgColor;
       config.overrides["paneProperties.backgroundType"] = "solid";
       config.overrides["paneProperties.scalesProperties.backgroundColor"] = bgColor;
+      config.overrides["paneProperties.vertGridProperties.color"] = bgColor;
+      config.overrides["paneProperties.horzGridProperties.color"] = bgColor;
     }
 
     new TradingView.widget(config);
