@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TradingView Chart with Forced BG Color</title>
+  <title>TradingView Chart with Dynamic BG Color and Dark Theme</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     html, body {
       margin: 0; padding: 0; height: 100%;
-      background-color: #000;
+      background-color: #000; /* بک گراند صفحه */
     }
     #tv_chart_container {
       width: 100vw;
@@ -21,17 +21,18 @@
   <script src="https://s3.tradingview.com/tv.js"></script>
   <script>
     const defaultOverrides = {
-      "mainSeriesProperties.candleStyle.upColor": "#3498db",
-      "mainSeriesProperties.candleStyle.downColor": "#7f8c8d",
-      "mainSeriesProperties.candleStyle.borderUpColor": "#3498db",
-      "mainSeriesProperties.candleStyle.borderDownColor": "#7f8c8d",
-      "mainSeriesProperties.candleStyle.wickUpColor": "#3498db",
-      "mainSeriesProperties.candleStyle.wickDownColor": "#7f8c8d",
+      "mainSeriesProperties.candleStyle.upColor": "#4CAF50",
+      "mainSeriesProperties.candleStyle.downColor": "#F44336",
+      "mainSeriesProperties.candleStyle.borderUpColor": "#4CAF50",
+      "mainSeriesProperties.candleStyle.borderDownColor": "#F44336",
+      "mainSeriesProperties.candleStyle.wickUpColor": "#4CAF50",
+      "mainSeriesProperties.candleStyle.wickDownColor": "#F44336",
       "paneProperties.background": "#000000",
       "paneProperties.backgroundType": "solid",
       "paneProperties.scalesProperties.backgroundColor": "#000000",
-      "paneProperties.vertGridProperties.color": "#000000",
-      "paneProperties.horzGridProperties.color": "#000000",
+      "paneProperties.vertGridProperties.color": "#222222",
+      "paneProperties.horzGridProperties.color": "#222222",
+      "paneProperties.crossHairProperties.color": "#888888"
     };
 
     const defaultConfig = {
@@ -41,7 +42,7 @@
       symbol: "BINANCE:BTCUSDT",
       interval: "60",
       timezone: "Etc/UTC",
-      theme: "light",  // تم رو light بذار که override پس‌زمینه خوب اعمال بشه
+      theme: "dark",  // تم حتما dark بذار
       style: "1",
       locale: "en",
       hide_top_toolbar: true,
@@ -54,28 +55,20 @@
         "volume.volume.transparency": 100,
       },
       overrides: { ...defaultOverrides },
-      hide_crosshair: true
+      hide_crosshair: false
     };
 
     const urlParams = new URLSearchParams(window.location.search);
     let config = { ...defaultConfig };
 
-    if (urlParams.has('config')) {
-      try {
-        const decoded = decodeURIComponent(urlParams.get('config'));
-        const parsed = JSON.parse(decoded);
-        config = { ...config, ...parsed };
-      } catch (e) {
-        console.warn("Invalid config JSON in URL, using default config");
-      }
-    }
-
+    // پارامترهای ساده
     ['symbol', 'interval', 'theme', 'locale', 'timezone'].forEach(key => {
       if (urlParams.has(key)) {
         config[key] = urlParams.get(key);
       }
     });
 
+    // رنگ‌ها
     const upColor = urlParams.get('upColor');
     const downColor = urlParams.get('downColor');
     const upBorderColor = urlParams.get('upBorderColor');
@@ -96,12 +89,14 @@
       config.overrides["mainSeriesProperties.candleStyle.wickDownColor"] = downWickColor || downColor;
     }
 
+    // **این بخش مهمه** — override کامل پس‌زمینه + عناصر جانبی  
     if (bgColor) {
       config.overrides["paneProperties.background"] = bgColor;
       config.overrides["paneProperties.backgroundType"] = "solid";
       config.overrides["paneProperties.scalesProperties.backgroundColor"] = bgColor;
       config.overrides["paneProperties.vertGridProperties.color"] = bgColor;
       config.overrides["paneProperties.horzGridProperties.color"] = bgColor;
+      config.overrides["paneProperties.crossHairProperties.color"] = bgColor;
     }
 
     new TradingView.widget(config);
